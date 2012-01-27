@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Made By Applets!</string>
+    <string name="app_name">Radio Piranha</string>
+    <string name="artist_lbl">Artist</string>
+    <string name="separator"> - </string>
+    <string name="album_lbl">Album</string>
+    <string name="song_lbl">Song</string>
+    <string name="main_menu_settings">Settings</string>
+    <string name="main_menu_lyrics">Lyrics</string>
+    <string name="main_menu_about">About</string>
+    <string name="stream">http://radiosansgenie.com:8000/radiopiranha.mp3</string>
+    <string name="stream2">http://www.destinedtolive.com/audio/rockwood/Rockwood_in_the_mix_(_Feeling_it_)_destinedtolive_com.mp3</string>
+    <string name="error_msg">Generic Error Message</string>
+    <string name="user_connections_lbl">Radio Users :</string>
+    <string name="bit_rate_lbl">Bit Rate :</string>
+    <string name="lyrics_lbl">No lyrics available now</string>
+    <string name="stream_lbl">Stream :</string>
+	
+</resources>
