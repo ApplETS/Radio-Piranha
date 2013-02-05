@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="teal">#335963</color>
+    <color name="dark_teal">#27434b</color>
+    <color name="yellow">#FBCF0B</color>
+    <color name="calendar_cell_text_color">#000000</color>
+    <color name="calendar_cell_background_color">#FAFAFA</color>
+    <color name="calendar_cell_border_color">#000000</color>
+    <color name="calendar_selected_cell_text_color">#FFFFFF</color>
+    <color name="calendar_selected_cell_background_color">#0071E3</color>
+    <color name="calendar_current_day_cell_background_color">#7389A5</color>
+    <color name="calendar_current_day_cell_text_color">#FFFFFF</color>
+    <color name="pressed_radio_piranha">#CCfbcf0b</color>
+
+</resources>

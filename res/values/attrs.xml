@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="NumGridView">
+        <attr name="stretch" format="boolean" />
+        <attr name="cellCountX" format="integer" min="1" />
+        <attr name="cellCountY" format="integer" min="1" />
+    </declare-styleable>
+
+</resources>
