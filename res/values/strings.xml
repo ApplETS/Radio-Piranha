@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, Made By Applets!</string>
+    <string name="hello">Cette application est libre de droit et est rendu possible grâce à ApplETS !</string>
     <string name="app_name">Radio Piranha</string>
     <string name="artist_lbl">Artist</string>
     <string name="separator"> - </string>
@@ -16,4 +16,32 @@
     <string name="bit_rate_lbl">Bit Rate :</string>
     <string name="lyrics_lbl">No lyrics available now</string>
     <string name="stream_lbl">Stream :</string>
+
+    <string-array name="main_labels">
+        <item>Profil</item>
+        <item>Nouvelles</item>
+        <item>Sécurité</item>
+        <item>Horaire</item>
+        <item>Bottin</item>
+        <item>Mes notes</item>
+        <item>Bibliothèque</item>
+        <item>Commentaire</item>
+    </string-array>
+    <string-array name="day_names">
+        <item>dim.</item>
+        <item>lun.</item>
+        <item>mar.</item>
+        <item>mer.</item>
+        <item>jeu.</item>
+        <item>ven.</item>
+        <item>sam.</item>
+    </string-array>
+
+    <string name="title_section3">À PROPOS</string>
+    <string name="title_section2">HORAIRE</string>
+    <string name="title_section1">LIVE</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+
 </resources>

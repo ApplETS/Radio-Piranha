@@ -5,10 +5,12 @@
     android:layout_height="fill_parent"
     android:background="@drawable/background" >
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/player_layout"
+        android:layout_alignParentBottom="false"
         android:baselineAligned="true"
         android:orientation="horizontal" >
 
@@ -16,15 +18,69 @@
             android:id="@+id/album_cover_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:contentDescription="@string/album_lbl"
             android:src="@drawable/album_cover" />
 
-        <include
+        <TextView
+            android:id="@+id/TextView01"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            layout="@layout/calendar_view" />
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView2"
+            android:layout_alignRight="@+id/textView2"
+            android:layout_below="@+id/textView2"
+            android:gravity="center"
+            android:lines="2"
+            android:text="Track"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/album_cover_img"
+            android:gravity="center"
+            android:lines="2"
+            android:text="Artist"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textView1"
+            android:gravity="center"
+            android:lines="2"
+            android:text="Album"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+        <android.support.v4.view.ViewPager
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/album_cover_img"
+            tools:context=".MainActivity" >
+
+            <android.support.v4.view.PagerTitleStrip
+                android:id="@+id/pager_title_strip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="@color/yellow"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:textColor="#000" />
+        </android.support.v4.view.ViewPager>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/player_layout"
@@ -34,14 +90,6 @@
         android:layout_alignParentLeft="true"
         android:layout_weight="1"
         android:gravity="bottom" >
-
-        <ImageButton
-            android:id="@+id/pause_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:contentDescription="@string/album_lbl"
-            android:src="@drawable/media_buton" />
     </LinearLayout>
 
 </RelativeLayout>

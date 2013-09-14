@@ -2,11 +2,10 @@ package ca.etsmtl.applets.radio;
 
 import java.io.IOException;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
@@ -14,31 +13,39 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.Toast;
+import ca.etsmtl.applets.radio.fragments.AboutFragment;
+import ca.etsmtl.applets.radio.fragments.WebFragment;
+import ca.etsmtl.applets.radio.models.CurrentCalendar;
 
-public class AppRadioActivity extends Activity {
+@SuppressLint("DefaultLocale")
+public class AppRadioActivity extends FragmentActivity {
     private static final CharSequence LOADING = "Loading please wait";
     private static final CharSequence EMPTY_TITLE = "";
     private MediaPlayer player;
     private ProgressDialog dialog;
-    private final IntentFilter intentFilter = new IntentFilter(
-	    AudioManager.ACTION_AUDIO_BECOMING_NOISY);
     private AudioManager am;
     private OnAudioFocusChangeListener afChangeListener;
+    protected CurrentCalendar currentCalendar;
 
-    public class MediaListener implements OnErrorListener, OnPreparedListener, OnClickListener {
+    public class MediaListener implements OnErrorListener, OnPreparedListener {
 
-	// private MediaPlayer player;
+	private MediaPlayer player;
 
 	public MediaListener(MediaPlayer player) {
-	    // this.player = player;
+	    this.player = player;
 	}
 
 	@Override
@@ -54,27 +61,9 @@ public class AppRadioActivity extends Activity {
 	    if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 		dialog.dismiss();
 		player.start();
-		findViewById(R.id.pause_btn).setClickable(true);
-		// ((TextView) findViewById(R.id.main_artist_lbl)).setText("");
-		// ((TextView) findViewById(R.id.main_album_lbl)).setText("");
-		// ((TextView) findViewById(R.id.main_song_lbl)).setText("");
 		Toast.makeText(getApplicationContext(), "Thanks for listening Radio Piranha",
 			Toast.LENGTH_LONG).show();
 	    }
-	}
-
-	@Override
-	public void onClick(View v) {
-	    if (player.isPlaying()) {
-		player.pause();
-		Toast.makeText(v.getContext(), "PAUSED", Toast.LENGTH_LONG).show();
-	    } else {
-		player.start();
-		Toast.makeText(v.getContext(), "STARTED", Toast.LENGTH_LONG).show();
-	    }
-	    final int ressource = (player.isPlaying()) ? android.R.drawable.ic_media_pause
-		    : android.R.drawable.ic_media_play;
-	    ((ImageButton) v).setImageResource(ressource);
 	}
 
     }
@@ -85,6 +74,16 @@ public class AppRadioActivity extends Activity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.main);
 
+	// Create the adapter that will return a fragment for each of the three
+	// primary sections of the app.
+	mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+	// Set up the ViewPager with the sections adapter.
+	mViewPager = (ViewPager) findViewById(R.id.pager);
+	mViewPager.setAdapter(mSectionsPagerAdapter);
+
+	/**
+	 * AUDIO PLAYER
+	 */
 	am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
 	afChangeListener = new OnAudioFocusChangeListener() {
@@ -128,8 +127,6 @@ public class AppRadioActivity extends Activity {
 	} catch (final IOException e) {
 	    displayErrorToast();
 	}
-
-	findViewById(R.id.pause_btn).setOnClickListener(listener);
     }
 
     @Override
@@ -140,15 +137,12 @@ public class AppRadioActivity extends Activity {
     @Override
     protected void onPause() {
 	super.onPause();
-	// player.pause();
-	// if (player != null) {
-	// if (player.isPlaying()) {
-	// player.stop();
-	// ((ImageButton) findViewById(R.id.pause_btn))
-	// .setImageResource(android.R.drawable.ic_media_play);
-	// }
-	// player.release();
-	// }
+	if (player != null) {
+	    if (player.isPlaying()) {
+		player.stop();
+	    }
+	    player.release();
+	}
     }
 
     @Override
@@ -172,8 +166,7 @@ public class AppRadioActivity extends Activity {
 	case R.id.main_menu_lyrics:
 	    startActivity(new Intent(this, LyricsActivity.class));
 	    break;
-	case R.id.main_menu_about:
-	    startActivity(new Intent(this, AboutActivity.class));
+	case R.id.main_menu_pause:
 	    break;
 	default:
 	    startActivity(new Intent(this, SettingsActivity.class));
@@ -184,7 +177,93 @@ public class AppRadioActivity extends Activity {
 
     private void displayErrorToast() {
 	Toast.makeText(this, R.string.error_msg, Toast.LENGTH_LONG).show();
+    }
 
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
+     * will keep every loaded fragment in memory. If this becomes too memory
+     * intensive, it may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    SectionsPagerAdapter mSectionsPagerAdapter;
+
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    ViewPager mViewPager;
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+	public SectionsPagerAdapter(FragmentManager fm) {
+	    super(fm);
+	}
+
+	@Override
+	public Fragment getItem(int position) {
+	    // getItem is called to instantiate the fragment for the given page.
+	    // Return a DummySectionFragment (defined as a static inner class
+	    // below) with the page number as its lone argument.
+	    Fragment fragment = new DummySectionFragment();
+	    if (position == 0) {
+
+	    } else if (position == 1) {
+		// fragment = new CalendarFragment();
+		fragment = new WebFragment();
+	    } else {
+		fragment = new AboutFragment();
+	    }
+	    final Bundle args = new Bundle();
+	    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+	    fragment.setArguments(args);
+	    return fragment;
+	}
+
+	@Override
+	public int getCount() {
+	    // Show 3 total pages.
+	    return 3;
+	}
+
+	@Override
+	public CharSequence getPageTitle(int position) {
+	    switch (position) {
+	    case 0:
+		return getString(R.string.title_section1).toUpperCase();
+	    case 1:
+		return getString(R.string.title_section2).toUpperCase();
+	    case 2:
+		return getString(R.string.title_section3).toUpperCase();
+	    }
+	    return null;
+	}
+    }
+
+    /**
+     * A dummy fragment representing a section of the app, but that simply
+     * displays dummy text.
+     */
+    public static class DummySectionFragment extends Fragment {
+	/**
+	 * The fragment argument representing the section number for this
+	 * fragment.
+	 */
+	public static final String ARG_SECTION_NUMBER = "section_number";
+
+	public DummySectionFragment() {
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+		Bundle savedInstanceState) {
+	    View v = inflater.inflate(R.layout.about, null, false);
+	    return v;
+	}
     }
 
 }

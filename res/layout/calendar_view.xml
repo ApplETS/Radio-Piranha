@@ -20,12 +20,13 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_previous_item" />
 
-        <ca.etsmtl.applets.views.CalendarTextView
+        <ca.etsmtl.applets.radio.views.CalendarTextView
             android:id="@+id/calendar_title"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.19"
             android:gravity="center"
+            android:text="Programmation Hiver 2013"
             android:textSize="30sp" />
 
         <ImageButton
@@ -45,10 +46,8 @@
         android:layout_height="36dp"
         android:layout_gravity="center"
         android:background="@null"
-        android:gravity="center_horizontal"
-        android:listSelector="#00000000"
+        android:gravity="center"
         android:numColumns="7" >
-
     </GridView>
 
     <LinearLayout
@@ -64,7 +63,8 @@
             android:layout_height="match_parent"
             android:scrollHorizontally="true"
             numgrid:cellCountX="7"
-            numgrid:cellCountY="6" />
+            numgrid:cellCountY="6"
+            numgrid:stretch="true" />
     </LinearLayout>
 
 </LinearLayout>

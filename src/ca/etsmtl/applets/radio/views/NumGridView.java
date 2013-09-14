@@ -21,8 +21,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import ca.etsmtl.applets.radio.R;
-import ca.etsmtl.applets.radio.models.ActivityCalendar;
 import ca.etsmtl.applets.radio.models.CalendarCell;
+import ca.etsmtl.applets.radio.models.CurrentCalendar;
 
 /**
  * NumGridView is view that renders a grid, where each cell contains a number.
@@ -131,6 +131,7 @@ public class NumGridView extends View implements Observer {
 	mCellCountY = a.getInt(R.styleable.NumGridView_cellCountY, 6);
 	a.recycle();
 
+	update(null, new CurrentCalendar().getCalendar());
 	// Setup the grid cells
 
     }
@@ -199,127 +200,103 @@ public class NumGridView extends View implements Observer {
 	return mCellCountY;
     }
 
-    // public void setSessions(final ArrayList<Session> obj) {
-    // sessions = obj;
-    // for (final Session s : sessions) {
-    // if (this.maxIndicators < s.getMaxActivities()) {
-    // this.maxIndicators = s.getMaxActivities();
-    // }
-    // }
-    // }
-
-    // private List<Session> getSessions(final List<Calendar> days) {
-    //
-    // final List<Session> sessions = new ArrayList<Session>();
-    //
-    // for (final Session s : this.sessions) {
-    // if (!(days.get(0).getTime().after(s.getDateFinCours()) ||
-    // days.get(days.size() - 1)
-    // .getTime().before(s.getDateDebut()))) {
-    // sessions.add(s);
-    // } else if (days.get(0).getTime().after(s.getDateFinCours())) {
-    // break;
-    // }
-    // }
-    //
-    // return sessions;
-    // }
-
     /**
      * Callback called when NumGridView object should draw itself. Draws all the
      * cells (background) and writes the current cell value centered
      */
+    @SuppressWarnings("deprecation")
     @Override
     protected void onDraw(final Canvas canvas) {
 	super.onDraw(canvas);
 
-	// Compute text origin inside the cell
-	final float fontsize = mPaintFg.descent() - mPaintFg.ascent();
-	final int tx = mCellWidth / 2;
-	final int ty = (int) (mCellHeight / 2 + fontsize / 2 - mPaintFg.descent());
+	if (mCells != null) {
+	    // Compute text origin inside the cell
+	    final float fontsize = mPaintFg.descent() - mPaintFg.ascent();
+	    final int tx = mCellWidth / 2;
+	    final int ty = (int) (mCellHeight / 2 + fontsize / 2 - mPaintFg.descent());
 
-	Date now;
-	CalendarCell cell;
+	    Date now;
+	    CalendarCell cell;
 
-	now = Calendar.getInstance(TimeZone.getTimeZone("Canada/Eastern"), Locale.CANADA_FRENCH)
-		.getTime();
-	// Draw all cells
-	for (int y = 0; y < mCellCountY; y++) {
-	    for (int x = 0; x < mCellCountX; x++) {
-		// Draw a rectangle
-		final int dx = x * mCellWidth + mOffsetX;
-		final int dy = y * mCellHeight + mOffsetY;
+	    now = Calendar
+		    .getInstance(TimeZone.getTimeZone("Canada/Eastern"), Locale.CANADA_FRENCH)
+		    .getTime();
+	    // Draw all cells
+	    for (int y = 0; y < mCellCountY; y++) {
+		for (int x = 0; x < mCellCountX; x++) {
+		    // Draw a rectangle
+		    final int dx = x * mCellWidth + mOffsetX;
+		    final int dy = y * mCellHeight + mOffsetY;
 
-		cell = mCells[x][y];
-		if (cell.equals(currentCell)) {
-		    mPaintFg.setAlpha(100);
-		    mPaintBg.setColor(getResources().getColor(
-			    R.color.calendar_selected_cell_background_color));
-		    mPaintFg.setColor(getResources().getColor(
-			    R.color.calendar_selected_cell_text_color));
-		} else if (cell.getDate().getYear() == now.getYear()
-			&& cell.getDate().getMonth() == now.getMonth()
-			&& cell.getDate().getDate() == now.getDate()) {
-		    mPaintFg.setAlpha(100);
-		    mPaintBg.setColor(getResources().getColor(
-			    R.color.calendar_current_day_cell_background_color));
-		    mPaintFg.setColor(getResources().getColor(
-			    R.color.calendar_current_day_cell_text_color));
-		} else if (cell.getDate().getMonth() == current.getTime().getMonth()) {
-		    mPaintFg.setAlpha(100);
-		    mPaintBg.setColor(getResources().getColor(
-			    R.color.calendar_cell_background_color));
-		    mPaintFg.setColor(getResources().getColor(R.color.calendar_cell_text_color));
+		    cell = mCells[x][y];
+		    if (cell.equals(currentCell)) {
+			mPaintFg.setAlpha(100);
+			mPaintBg.setColor(getResources().getColor(
+				R.color.calendar_selected_cell_background_color));
+			mPaintFg.setColor(getResources().getColor(
+				R.color.calendar_selected_cell_text_color));
+		    } else if (cell.getDate().getYear() == now.getYear()
+			    && cell.getDate().getMonth() == now.getMonth()
+			    && cell.getDate().getDate() == now.getDate()) {
+			mPaintFg.setAlpha(100);
+			mPaintBg.setColor(getResources().getColor(
+				R.color.calendar_current_day_cell_background_color));
+			mPaintFg.setColor(getResources().getColor(
+				R.color.calendar_current_day_cell_text_color));
+		    } else if (cell.getDate().getMonth() == current.getTime().getMonth()) {
+			mPaintFg.setAlpha(100);
+			mPaintBg.setColor(getResources().getColor(
+				R.color.calendar_cell_background_color));
+			mPaintFg.setColor(getResources().getColor(R.color.calendar_cell_text_color));
 
-		} else {
-		    mPaintBg.setColor(getResources().getColor(
-			    R.color.calendar_cell_background_color));
-		    mPaintFg.setColor(getResources().getColor(R.color.calendar_cell_text_color));
-		    mPaintFg.setAlpha(50);
+		    } else {
+			mPaintBg.setColor(getResources().getColor(
+				R.color.calendar_cell_background_color));
+			mPaintFg.setColor(getResources().getColor(R.color.calendar_cell_text_color));
+			mPaintFg.setAlpha(50);
+		    }
+
+		    canvas.drawRect(new Rect(dx + 1, dy + 1, dx + mCellWidth - 2, dy + mCellHeight
+			    - 2), mPaintBorders);
+
+		    canvas.drawRect(new Rect(dx + 1, dy + 1, dx + mCellWidth - 2, dy + mCellHeight
+			    - 2), mPaintBg);
+
+		    // Draw the cell value
+		    final int v = cell.getDate().getDate();
+		    canvas.drawText("" + v, dx + tx, dy + ty, mPaintFg);
+
+//		    int i = 0;
+//
+//		    final float radius = mCellWidth / (3 * maxIndicators + 1);
+//
+//		    final float startpos = dx + tx
+//			    - ((2 * cell.size() + cell.size() - 1) * radius / 2 - radius);
+
+		    // ActivityCalendar event;
+		    // while (it.hasNext()) {
+		    // event = it.next();
+		    //
+		    // final Drawable d =
+		    // getResources().getDrawable(event.getDrawableResId());
+		    //
+		    // final int left = (int) (startpos + 3 * i * radius -
+		    // radius);
+		    //
+		    // final int right = (int) (left + (radius * 2));
+		    //
+		    // final int bottom = dy + mCellHeight - ty / 4 + 2;
+		    //
+		    // final int top = (int) (bottom - (2 * radius));
+		    //
+		    // d.setBounds(left, top, right, bottom);
+		    //
+		    // d.draw(canvas);
+		    //
+		    // i++;
+		    // }
+
 		}
-
-		canvas.drawRect(
-			new Rect(dx + 1, dy + 1, dx + mCellWidth - 2, dy + mCellHeight - 2),
-			mPaintBorders);
-
-		canvas.drawRect(
-			new Rect(dx + 1, dy + 1, dx + mCellWidth - 2, dy + mCellHeight - 2),
-			mPaintBg);
-
-		// Draw the cell value
-		final int v = cell.getDate().getDate();
-		canvas.drawText("" + v, dx + tx, dy + ty, mPaintFg);
-
-		final Iterator<ActivityCalendar> it = cell.iterator();
-
-		int i = 0;
-
-		final float radius = mCellWidth / (3 * maxIndicators + 1);
-
-		final float startpos = dx + tx
-			- ((2 * cell.size() + cell.size() - 1) * radius / 2 - radius);
-
-//		ActivityCalendar event;
-//		while (it.hasNext()) {
-//		    event = it.next();
-//
-//		    final Drawable d = getResources().getDrawable(event.getDrawableResId());
-//
-//		    final int left = (int) (startpos + 3 * i * radius - radius);
-//
-//		    final int right = (int) (left + (radius * 2));
-//
-//		    final int bottom = dy + mCellHeight - ty / 4 + 2;
-//
-//		    final int top = (int) (bottom - (2 * radius));
-//
-//		    d.setBounds(left, top, right, bottom);
-//
-//		    d.draw(canvas);
-//
-//		    i++;
-//		}
-
 	    }
 	}
     }
@@ -416,6 +393,7 @@ public class NumGridView extends View implements Observer {
 	mOnCellTouchListener = listener;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void update(final Observable observable, final Object data) {
 
@@ -495,75 +473,9 @@ public class NumGridView extends View implements Observer {
 		    .getTime();
 	}
 
-	// Possibilité d'avoir 2 sessions dans 1 mois
-	// final List<Session> sessions = getSessions(days);
-
 	for (int y = 0; y < mCellCountY; y++) {
 	    for (int x = 0; x < mCellCountX; x++) {
 		mCells[x][y] = new CalendarCell(it.next().getTime());
-
-		// for (final Session s : sessions) {
-		//
-		// if (mCells[x][y].getDate().after(s.getDateDebut())
-		// && mCells[x][y].getDate().before(s.getDateFinCours())) {
-		//
-		// boolean isRemplacee = false;
-		//
-		// for (final JoursRemplaces j : s.getJoursRemplaces()) {
-		//
-		// if (mCells[x][y].getDate().getDate() ==
-		// j.getDateRemplacement()
-		// .getDate()
-		// && mCells[x][y].getDate().getMonth() ==
-		// j.getDateRemplacement()
-		// .getMonth()
-		// && mCells[x][y].getDate().getYear() ==
-		// j.getDateRemplacement()
-		// .getYear()) {
-		// if
-		// (s.getActivities(String.valueOf(j.getDateOrigine().getDay()))
-		// != null) {
-		// mCells[x][y].setEvents(s.getActivities(String.valueOf(j
-		// .getDateOrigine().getDay())));
-		// } else {
-		// mCells[x][y].clear();
-		// }
-		//
-		// isRemplacee = true;
-		// break;
-		// }
-		//
-		// if (mCells[x][y].getDate().getDate() ==
-		// j.getDateOrigine().getDate()
-		// && mCells[x][y].getDate().getMonth() == j.getDateOrigine()
-		// .getMonth()
-		// && mCells[x][y].getDate().getYear() == j.getDateOrigine()
-		// .getYear()) {
-		// mCells[x][y].clear();
-		//
-		// final ActivityCalendar activity = new ActivityCalendar();
-		//
-		// activity.setCours(j.getDescription().trim());
-		// activity.setDrawableResId(R.drawable.kal_marker_black);
-		//
-		// mCells[x][y].add(activity);
-		//
-		// isRemplacee = true;
-		// break;
-		// }
-		// }
-		//
-		// if (!isRemplacee
-		// &&
-		// s.getActivities(String.valueOf(mCells[x][y].getDate().getDay()))
-		// != null) {
-		// mCells[x][y].setEvents(s.getActivities(String.valueOf(mCells[x][y]
-		// .getDate().getDay())));
-		// }
-		//
-		// }
-		//
-		// }
 
 		if (currentCell == null) {
 		    if (mCells[x][y].getDate().getMonth() == now.getMonth()

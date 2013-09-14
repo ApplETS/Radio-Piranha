@@ -3,7 +3,7 @@
     android:id="@+id/lyrics_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,7 +13,10 @@
             android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge" android:padding="10dip" android:text="@string/lyrics_lbl" android:gravity="center"/>
+            android:gravity="center"
+            android:padding="10dip"
+            android:text="@string/lyrics_lbl"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
 </ScrollView>
