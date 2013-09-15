@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Cette application est libre de droit et est rendu possible grâce à ApplETS !</string>
+    <string name="hello">Cette application est libre de droit et est rendu possible grâce à <a href="http://www.clubapplets.ca">ApplETS !</a></string>
     <string name="app_name">Radio Piranha</string>
     <string name="artist_lbl">Artist</string>
     <string name="separator"> - </string>

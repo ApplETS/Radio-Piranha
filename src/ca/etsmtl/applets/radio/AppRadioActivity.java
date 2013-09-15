@@ -61,8 +61,8 @@ public class AppRadioActivity extends FragmentActivity {
 				dialog.dismiss();
 				player = mp;
 				player.start();
-				itemPlayPause.setIcon(android.R.drawable.ic_media_play);
-				
+				itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
+
 				Toast.makeText(getApplicationContext(),
 						"Thanks for listening Radio Piranha", Toast.LENGTH_LONG)
 						.show();
@@ -85,63 +85,76 @@ public class AppRadioActivity extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		/**
-		 * AUDIO PLAYER
-		 */
-		am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		if (savedInstanceState == null) {
+			/**
+			 * AUDIO PLAYER
+			 */
+			am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
-		afChangeListener = new OnAudioFocusChangeListener() {
-			@Override
-			public void onAudioFocusChange(int focusChange) {
-				Log.d("FOCUS CHANGE", focusChange + "");
-				if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-					if (player.isPlaying()) {
-						player.pause();
-					}
-					am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-				} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
-						|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
-					if (!player.isPlaying()) {
-						player.start();
-					}
-				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-					// am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
-					am.abandonAudioFocus(afChangeListener);
-					if (player.isPlaying()) {
-						player.stop();
-					}
-				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-					if (player.isPlaying()) {
-						player.stop();
+			afChangeListener = new OnAudioFocusChangeListener() {
+				@Override
+				public void onAudioFocusChange(int focusChange) {
+
+					Log.d("FOCUS CHANGE", focusChange + "");
+
+					if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+
+						if (player.isPlaying()) {
+							player.pause();
+						}
+						am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+					} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
+							|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
+
+						if (!player.isPlaying()) {
+							player.start();
+						}
+					} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+
+						am.abandonAudioFocus(afChangeListener);
+						if (player.isPlaying()) {
+							player.pause();
+						}
+					} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+
+						if (player.isPlaying()) {
+							player.pause();
+						}
 					}
 				}
+			};
+
+			player = new MediaPlayer();
+			final MediaListener listener = new MediaListener();
+			player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+			player.setOnErrorListener(listener);
+			player.setOnPreparedListener(listener);
+
+			try {
+				dialog = ProgressDialog.show(this, EMPTY_TITLE, LOADING, true);
+				player.setDataSource(getString(R.string.stream));
+				player.prepareAsync();
+			} catch (final IllegalArgumentException e) {
+				displayErrorToast();
+			} catch (final IllegalStateException e) {
+				displayErrorToast();
+			} catch (final IOException e) {
+				displayErrorToast();
 			}
-		};
-
-		player = new MediaPlayer();
-		final MediaListener listener = new MediaListener();
-		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		player.setOnErrorListener(listener);
-		player.setOnPreparedListener(listener);
-
-		try {
-			dialog = ProgressDialog.show(this, EMPTY_TITLE, LOADING, true);
-			player.setDataSource(getString(R.string.stream));
-			player.prepareAsync();
-		} catch (final IllegalArgumentException e) {
-			displayErrorToast();
-		} catch (final IllegalStateException e) {
-			displayErrorToast();
-		} catch (final IOException e) {
-			displayErrorToast();
 		}
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		// do nothing
-		return;
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putString("iwasalreadyplaying", "ok");
+		super.onSaveInstanceState(outState);
 	}
+
+	// @Override
+	// public void onConfigurationChanged(Configuration newConfig) {
+	// super.onConfigurationChanged(newConfig);
+	// return;
+	// }
 
 	@Override
 	protected void onPause() {
@@ -179,7 +192,7 @@ public class AppRadioActivity extends FragmentActivity {
 				player.pause();
 			} else {
 				itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
-				player.prepareAsync();
+				player.start();
 			}
 			break;
 		default:

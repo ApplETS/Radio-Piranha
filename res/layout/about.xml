@@ -125,6 +125,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="30dip"
             android:text="@string/hello"
+            android:autoLink="web"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -133,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:text="http://www.clubapplets.ca"
+            android:text="https://github.com/ApplETS/Radio-Piranha"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
