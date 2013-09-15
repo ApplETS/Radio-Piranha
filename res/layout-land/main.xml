@@ -31,7 +31,7 @@
             android:layout_below="@+id/album_cover_img"
             android:gravity="center"
             android:lines="2"
-            android:text="Artist"
+            android:text="@string/artist"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -44,7 +44,7 @@
             android:layout_below="@+id/textView1"
             android:gravity="center"
             android:lines="2"
-            android:text="Album"
+            android:text="@string/album"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -57,7 +57,7 @@
             android:layout_below="@+id/textView2"
             android:gravity="center"
             android:lines="2"
-            android:text="Track"
+            android:text="@string/track"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 

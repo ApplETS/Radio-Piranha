@@ -16,11 +16,13 @@
 
         <ImageView
             android:id="@+id/album_cover_img"
-            android:layout_width="wrap_content"
+            android:layout_width="128dp"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/TextView01"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/album_lbl"
+            android:maxWidth="128dp"
             android:src="@drawable/album_cover" />
 
         <TextView
@@ -30,9 +32,10 @@
             android:layout_alignLeft="@+id/textView2"
             android:layout_alignRight="@+id/textView2"
             android:layout_below="@+id/textView2"
+            android:ellipsize="end"
             android:gravity="center"
             android:lines="2"
-            android:text="Track"
+            android:text="@string/track"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -43,9 +46,10 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/album_cover_img"
+            android:ellipsize="end"
             android:gravity="center"
             android:lines="2"
-            android:text="Artist"
+            android:text="@string/artist"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -56,9 +60,10 @@
             android:layout_alignLeft="@+id/textView1"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/textView1"
+            android:ellipsize="end"
             android:gravity="center"
             android:lines="2"
-            android:text="Album"
+            android:text="@string/album"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -84,6 +89,7 @@
 
     <LinearLayout
         android:id="@+id/player_layout"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

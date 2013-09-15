@@ -39,9 +39,10 @@
 
     <string name="title_section3">À PROPOS</string>
     <string name="title_section2">HORAIRE</string>
-    <string name="title_section1">LIVE</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="track">Track</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
 
 </resources>
