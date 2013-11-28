@@ -1,6 +1,11 @@
 package ca.etsmtl.applets.radio;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -11,6 +16,7 @@ import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,8 +30,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Toast;
+import ca.etsmtl.applets.radio.M3UParser.M3UHolder;
 import ca.etsmtl.applets.radio.fragments.AboutFragment;
+import ca.etsmtl.applets.radio.fragments.FacebookPostFragment;
 import ca.etsmtl.applets.radio.fragments.WebFragment;
 import ca.etsmtl.applets.radio.models.CurrentCalendar;
 
@@ -39,6 +48,7 @@ public class AppRadioActivity extends FragmentActivity {
 	private OnAudioFocusChangeListener afChangeListener;
 	protected CurrentCalendar currentCalendar;
 	private MenuItem itemPlayPause;
+	private M3UParser mu3Parser;
 
 	public class MediaListener implements OnErrorListener, OnPreparedListener {
 
@@ -75,8 +85,14 @@ public class AppRadioActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+		setContentView(R.layout.main);
+		String stream = getString(R.string.stream);
+		String m3u = getString(R.string.m3u);
+
+		new MyM3UTask(getApplicationContext()).execute(m3u);
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -85,63 +101,60 @@ public class AppRadioActivity extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		if (savedInstanceState == null) {
-			/**
-			 * AUDIO PLAYER
-			 */
-			am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		// if (savedInstanceState == null) {
+		/**
+		 * AUDIO PLAYER
+		 */
+		am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
-			afChangeListener = new OnAudioFocusChangeListener() {
-				@Override
-				public void onAudioFocusChange(int focusChange) {
+		afChangeListener = new OnAudioFocusChangeListener() {
+			@Override
+			public void onAudioFocusChange(int focusChange) {
 
-					Log.d("FOCUS CHANGE", focusChange + "");
+				Log.d("FOCUS CHANGE", focusChange + "");
 
-					if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+				if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+				} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
+						|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
 
-						if (player.isPlaying()) {
-							player.pause();
-						}
-						am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-					} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
-							|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
+					// if (!player.isPlaying()) {
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0);
+					player.start();
+					// }
+				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
-						if (!player.isPlaying()) {
-							player.start();
-						}
-					} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+					am.abandonAudioFocus(afChangeListener);
+					if (player.isPlaying()) {
+						player.pause();
+					}
+				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 
-						am.abandonAudioFocus(afChangeListener);
-						if (player.isPlaying()) {
-							player.pause();
-						}
-					} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-
-						if (player.isPlaying()) {
-							player.pause();
-						}
+					if (player.isPlaying()) {
+						player.pause();
 					}
 				}
-			};
-
-			player = new MediaPlayer();
-			final MediaListener listener = new MediaListener();
-			player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-			player.setOnErrorListener(listener);
-			player.setOnPreparedListener(listener);
-
-			try {
-				dialog = ProgressDialog.show(this, EMPTY_TITLE, LOADING, true);
-				player.setDataSource(getString(R.string.stream));
-				player.prepareAsync();
-			} catch (final IllegalArgumentException e) {
-				displayErrorToast();
-			} catch (final IllegalStateException e) {
-				displayErrorToast();
-			} catch (final IOException e) {
-				displayErrorToast();
 			}
+		};
+
+		player = new MediaPlayer();
+		final MediaListener listener = new MediaListener();
+		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		player.setOnErrorListener(listener);
+		player.setOnPreparedListener(listener);
+
+		try {
+			dialog = ProgressDialog.show(this, EMPTY_TITLE, LOADING, true);
+			player.setDataSource(stream);
+			player.prepareAsync();
+		} catch (final IllegalArgumentException e) {
+			displayErrorToast();
+		} catch (final IllegalStateException e) {
+			displayErrorToast();
+		} catch (final IOException e) {
+			displayErrorToast();
 		}
+		// }
 	}
 
 	@Override
@@ -150,29 +163,28 @@ public class AppRadioActivity extends FragmentActivity {
 		super.onSaveInstanceState(outState);
 	}
 
-	// @Override
-	// public void onConfigurationChanged(Configuration newConfig) {
-	// super.onConfigurationChanged(newConfig);
-	// return;
-	// }
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		return;
+	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
 		if (player != null) {
 			if (player.isPlaying()) {
 				player.stop();
 			}
 			player.release();
 		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (am != null) {
-			am.abandonAudioFocus(afChangeListener);
-		}
+		am.abandonAudioFocus(afChangeListener);
 	}
 
 	@Override
@@ -189,12 +201,14 @@ public class AppRadioActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.main_menu_pause:
-			if (player.isPlaying()) {
-				itemPlayPause.setIcon(android.R.drawable.ic_media_play);
-				player.pause();
-			} else {
-				itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
-				player.start();
+			if (player != null) {
+				if (player.isPlaying()) {
+					itemPlayPause.setIcon(android.R.drawable.ic_media_play);
+					player.pause();
+				} else {
+					itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
+					player.start();
+				}
 			}
 			break;
 		default:
@@ -240,8 +254,10 @@ public class AppRadioActivity extends FragmentActivity {
 			Fragment fragment = null;
 			if (position == 0) {
 				fragment = new WebFragment();
-			} else {
+			} else if (position == 1) {
 				fragment = new AboutFragment();
+			} else {
+				fragment = new FacebookPostFragment();
 			}
 
 			final Bundle args = new Bundle();
@@ -254,7 +270,7 @@ public class AppRadioActivity extends FragmentActivity {
 
 		@Override
 		public int getCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -264,6 +280,8 @@ public class AppRadioActivity extends FragmentActivity {
 				return getString(R.string.title_section2).toUpperCase();
 			case 1:
 				return getString(R.string.title_section3).toUpperCase();
+			case 2:
+				return getString(R.string.title_section4).toUpperCase();
 			}
 			return null;
 		}
@@ -291,4 +309,61 @@ public class AppRadioActivity extends FragmentActivity {
 		}
 	}
 
+	class MyM3UTask extends AsyncTask<String, Void, Void> {
+
+		private Context c;
+		private String url;
+
+		public MyM3UTask(Context c) {
+			this.c = c;
+		}
+
+		@SuppressWarnings("unused")
+		@Override
+		protected Void doInBackground(String... params) {
+
+			this.url = params[0];
+			writeFileToInternalStorage();
+
+			mu3Parser = new M3UParser(c);
+			try {
+				M3UHolder m3uHolder = mu3Parser.parseFile();
+				if (m3uHolder != null) {
+					String field0 = m3uHolder.getName(0);
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+
+			return null;
+		}
+
+		private void writeFileToInternalStorage() {
+			String eol = System.getProperty("line.separator");
+			ReadableByteChannel rbc = null;
+			try {
+
+				URL website;
+				try {
+					website = new URL(url);
+					rbc = Channels.newChannel(website.openStream());
+					openFileOutput("radio_m3u.m3u", MODE_WORLD_WRITEABLE)
+							.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+					rbc.close();
+					website = null;
+
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+			}
+		}
+	}
 }
