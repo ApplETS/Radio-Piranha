@@ -170,7 +170,9 @@ public class AppRadioActivity extends FragmentActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		am.abandonAudioFocus(null);
+		if (am != null) {
+			am.abandonAudioFocus(afChangeListener);
+		}
 	}
 
 	@Override
