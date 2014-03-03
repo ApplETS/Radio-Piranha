@@ -1,6 +1,8 @@
 package ca.etsmtl.applets.radio;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -85,12 +87,24 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 			@Override
 			public void onAudioFocusChange(int focusChange) {
 				if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+					final int volume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 					am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+					
+						Timer t = new Timer();
+						TimerTask timerTask = new TimerTask() {
+							
+							@Override
+							public void run() {
+								am.setStreamVolume(AudioManager.STREAM_MUSIC,volume, 0);
+							}
+						};
+						t.schedule(timerTask, 1000L);
+					
 				} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
 						|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
 
 					if (!player.isPlaying()) {
-					am.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0);
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
 					player.start();
 					mState = State.Playing;
 				 }
@@ -208,7 +222,7 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 	public void onPrepared(MediaPlayer mp) {
 		final int result = am.requestAudioFocus(afChangeListener,
 				AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+				AudioManager.AUDIOFOCUS_GAIN);
 
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			mState = State.AUDIOFOCUS_REQUEST_GRANTED;

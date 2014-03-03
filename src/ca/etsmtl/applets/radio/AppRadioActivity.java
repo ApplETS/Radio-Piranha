@@ -289,7 +289,7 @@ public class AppRadioActivity extends FragmentActivity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mService =((RadioMusicService.LocalBinder)service).getService();
 			//Toast.makeText(AppRadioActivity.this, "Connecté", Toast.LENGTH_SHORT).show();
-			mService.setVolume();
+			//mService.setVolume();
 			runThreadForPlayer();
 			mBound = true;
 			
