@@ -185,7 +185,8 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 		notification = new Notification();
 		notification.tickerText = text;
 		notification.icon = R.drawable.ic_launcher;
-		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+	//	notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.setLatestEventInfo(getApplicationContext(), getResources().getString(R.string.app_name),
 				text, pi);
 		
