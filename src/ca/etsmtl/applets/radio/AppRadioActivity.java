@@ -8,8 +8,13 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
@@ -18,6 +23,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -42,44 +48,14 @@ import ca.etsmtl.applets.radio.models.CurrentCalendar;
 public class AppRadioActivity extends FragmentActivity {
 	private static final CharSequence LOADING = "Loading please wait";
 	private static final CharSequence EMPTY_TITLE = "";
-	private MediaPlayer player;
-	private ProgressDialog dialog;
-	private AudioManager am;
-	private OnAudioFocusChangeListener afChangeListener;
 	protected CurrentCalendar currentCalendar;
 	private MenuItem itemPlayPause;
 	private M3UParser mu3Parser;
-
-	public class MediaListener implements OnErrorListener, OnPreparedListener {
-
-		@Override
-		public boolean onError(MediaPlayer player, int what, int extra) {
-			dialog.dismiss();
-			Toast.makeText(getApplicationContext(),
-					"An Error occured, please try again later",
-					Toast.LENGTH_SHORT).show();
-			return true;
-		}
-
-		@Override
-		public void onPrepared(MediaPlayer mp) {
-			final int result = am.requestAudioFocus(afChangeListener,
-					AudioManager.STREAM_MUSIC,
-					AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-
-			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-				dialog.dismiss();
-				player = mp;
-				player.start();
-				itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
-
-				Toast.makeText(getApplicationContext(),
-						"Thanks for listening Radio Piranha", Toast.LENGTH_LONG)
-						.show();
-			}
-		}
-
-	}
+	
+	private boolean musicThreadFinished;
+	private RadioMusicService mService;
+	private boolean mBound;
+	
 
 	/** Called when the activity is first created. */
 	@Override
@@ -100,61 +76,6 @@ public class AppRadioActivity extends FragmentActivity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-
-		// if (savedInstanceState == null) {
-		/**
-		 * AUDIO PLAYER
-		 */
-		am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
-		afChangeListener = new OnAudioFocusChangeListener() {
-			@Override
-			public void onAudioFocusChange(int focusChange) {
-
-				Log.d("FOCUS CHANGE", focusChange + "");
-
-				if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-					am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-				} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
-						|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
-
-					// if (!player.isPlaying()) {
-					am.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0);
-					player.start();
-					// }
-				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-
-					am.abandonAudioFocus(afChangeListener);
-					if (player.isPlaying()) {
-						player.pause();
-					}
-				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-
-					if (player.isPlaying()) {
-						player.pause();
-					}
-				}
-			}
-		};
-
-		player = new MediaPlayer();
-		final MediaListener listener = new MediaListener();
-		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		player.setOnErrorListener(listener);
-		player.setOnPreparedListener(listener);
-
-		try {
-			dialog = ProgressDialog.show(this, EMPTY_TITLE, LOADING, true);
-			player.setDataSource(stream);
-			player.prepareAsync();
-		} catch (final IllegalArgumentException e) {
-			displayErrorToast();
-		} catch (final IllegalStateException e) {
-			displayErrorToast();
-		} catch (final IOException e) {
-			displayErrorToast();
-		}
-		// }
 	}
 
 	@Override
@@ -176,15 +97,65 @@ public class AppRadioActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
-		if (player != null) {
-			if (player.isPlaying()) {
-				player.stop();
-			}
-			player.release();
+	protected void onStart() {		
+		super.onStart();
+		if(!isMyServiceRunning()){
+			Intent intent = new Intent(this,RadioMusicService.class);
+			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+			startService(intent);
+		}else{
+			Intent intent = new Intent(this,RadioMusicService.class);
+			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		}
-		am.abandonAudioFocus(afChangeListener);
+	}
+	@Override
+	protected void onStop() {
+		musicThreadFinished = true;
+		super.onStop();
+		if(mBound){
+			unbindService(mConnection);
+			mBound=false;
+		}
+//		am.abandonAudioFocus(afChangeListener);
+	}
+	
+	private void runThreadForPlayer(){
+		musicThreadFinished = false;
+		new Thread(new Runnable() {  
+		    @Override
+		    public void run() {
+		    	  Log.v("AppRadioActivity", "AppRadioActivity musicThreadFinished="+musicThreadFinished);
+		        while (!musicThreadFinished) {
+		            try {
+		                Thread.sleep(1000);
+		            } catch (InterruptedException e) {
+		                return;
+		            } catch (Exception e) {
+		                return;
+		            }
+		            Log.v("AppRadioActivity", "AppRadioActivity thread running.");
+		            runOnUiThread(new Runnable() {
+		                @Override
+		                public void run() {
+		                	if(mBound){
+			                    if ( mService.isPlaying()) {
+			                    	itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
+			                    } else {
+			                    	itemPlayPause.setIcon(android.R.drawable.ic_media_play);
+			                
+			                    }
+		                	}
+		                }
+		            });
+		        }
+		    }
+		}).start();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		stopService(new Intent(this, RadioMusicService.class));
+		super.onDestroy();
 	}
 
 	@Override
@@ -201,14 +172,21 @@ public class AppRadioActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.main_menu_pause:
-			if (player != null) {
-				if (player.isPlaying()) {
-					itemPlayPause.setIcon(android.R.drawable.ic_media_play);
-					player.pause();
-				} else {
-					itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
-					player.start();
+			if(mBound){
+				if ( mService.getMediaPlayer() != null) {
+					if (   mService.isPlaying()) {
+						itemPlayPause.setIcon(android.R.drawable.ic_media_play);
+						mService.pause();
+					} else {
+						Log.v("AppRadioActivity", "AppRadioActivity: play");
+						itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
+						mService.play();
+					}
+				}else{
+					Log.v("AppRadioActivity", "AppRadioActivity not mService.getMediaPlayer()="+mService.getMediaPlayer() );
 				}
+			}else{
+				Log.v("AppRadioActivity", "AppRadioActivity not bound");
 			}
 			break;
 		default:
@@ -286,6 +264,39 @@ public class AppRadioActivity extends FragmentActivity {
 			return null;
 		}
 	}
+	
+	private boolean isMyServiceRunning(){
+		ActivityManager activityManager=(ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for(RunningServiceInfo service: activityManager.getRunningServices(Integer.MAX_VALUE)){
+			 if(RadioMusicService.class.getName().equals(service.service.getClassName())){
+				 return true;
+			 }
+		}
+		return false;
+	}
+	
+	
+	private ServiceConnection mConnection = new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mService = null;
+			//Toast.makeText(AppRadioActivity.this, "Deconnecté", Toast.LENGTH_SHORT).show();
+			mBound = false;
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mService =((RadioMusicService.LocalBinder)service).getService();
+			//Toast.makeText(AppRadioActivity.this, "Connecté", Toast.LENGTH_SHORT).show();
+			mService.setVolume();
+			runThreadForPlayer();
+			mBound = true;
+			
+			
+		}
+	};
+	
 
 	/**
 	 * A dummy fragment representing a section of the app, but that simply
@@ -366,4 +377,5 @@ public class AppRadioActivity extends FragmentActivity {
 			}
 		}
 	}
+	
 }
