@@ -141,7 +141,13 @@ public class FacebookPostFragment extends ListFragment implements Observer, OnIt
 			final News n = getItem(position);
 
 			title = n.getTitle();
-			holder.title.setText(Html.fromHtml(title));
+			Spanned titleSpanned = Html.fromHtml(title);
+			if(titleSpanned.length()>1){
+				holder.title.setText(Html.fromHtml(title));
+			}else{
+				((TextView) convertView
+				.findViewById(R.id.newsListItemTitle)).setVisibility(View.GONE);
+			}
 
 			holder.date.setText(dateFormat.format(n.getPubDate()));
 
