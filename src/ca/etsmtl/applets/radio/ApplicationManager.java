@@ -17,3 +17,25 @@ public class ApplicationManager extends Application {
 		BugSenseHandler.initAndStartSession(this, "4422c148");
 	}
 }
+
+/**
+ * A dummy fragment representing a section of the app, but that simply
+ * displays dummy text.
+ */
+//public static class DummySectionFragment extends Fragment {
+//	/**
+//	 * The fragment argument representing the section number for this
+//	 * fragment.
+//	 */
+//	public static final String ARG_SECTION_NUMBER = "section_number";
+//
+//	public DummySectionFragment() {
+//	}
+//
+//	@Override
+//	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//			Bundle savedInstanceState) {
+//		View v = inflater.inflate(R.layout.about, null, false);
+//		return v;
+//	}
+//}

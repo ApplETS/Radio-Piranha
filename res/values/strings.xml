@@ -46,5 +46,7 @@
     <string name="track">Track</string>
     <string name="artist">Artist</string>
     <string name="album">Album</string>
+    <string name="notification_text">Vous écoutez radio Piranha</string>
+    <string name="new_image">Radio Piranha a partagé un post</string>
 
 </resources>

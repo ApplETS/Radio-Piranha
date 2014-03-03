@@ -18,20 +18,26 @@ import org.xml.sax.SAXException;
 import utils.XMLNewsParser;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import ca.etsmtl.applets.radio.R;
 import ca.etsmtl.applets.radio.models.News;
 import ca.etsmtl.applets.radio.models.ObservableBundle;
 
-public class FacebookPostFragment extends ListFragment implements Observer {
+public class FacebookPostFragment extends ListFragment implements Observer, OnItemClickListener {
 
 	private static final String FACEBOOK_XML_RSS = "https://www.facebook.com/feeds/page.php?id=211557725590576&format=rss20";
 	private ObservableBundle bundle;
@@ -44,11 +50,16 @@ public class FacebookPostFragment extends ListFragment implements Observer {
 		bundle = new ObservableBundle();
 		bundle.addObserver(this);
 
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		adapter = new NewsAdapter(getActivity(), new ArrayList<News>());
 
 		setListAdapter(adapter);
-
 		getActivity().setProgressBarIndeterminateVisibility(true);
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	@Override
@@ -130,14 +141,25 @@ public class FacebookPostFragment extends ListFragment implements Observer {
 			final News n = getItem(position);
 
 			title = n.getTitle();
-			holder.title.setText(Html.fromHtml(title));
+			Spanned titleSpanned = Html.fromHtml(title);
+			if(titleSpanned.length()>1){
+				holder.title.setText(Html.fromHtml(title));
+			}else{
+				((TextView) convertView
+				.findViewById(R.id.newsListItemTitle)).setVisibility(View.GONE);
+			}
 
 			holder.date.setText(dateFormat.format(n.getPubDate()));
 
 			description = n.getDescription();
 			if (description.length() > 200) {
-				holder.description.setText(Html.fromHtml(description.substring(
-						0, 180)));
+				Spanned desc = Html.fromHtml(description.substring(
+						0, 180));
+				if(desc.length()>1){
+					holder.description.setText(desc);
+				}else{
+					holder.description.setText(getString(R.string.new_image));
+				}
 			} else {
 				holder.description.setText(Html.fromHtml(description));
 			}
@@ -150,7 +172,7 @@ public class FacebookPostFragment extends ListFragment implements Observer {
 			super.add(object);
 		}
 	}
-
+	
 	@Override
 	public void update(Observable o, final Object obj) {
 		if (obj instanceof News) {
@@ -161,8 +183,18 @@ public class FacebookPostFragment extends ListFragment implements Observer {
 					final News n = (News) obj;
 					adapter.add(n);
 					adapter.notifyDataSetChanged();
+					getListView().setOnItemClickListener(FacebookPostFragment.this);
 				}
 			});
 		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		final News n = adapter.getItem(position);
+		n.getLink();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(n.getLink()));
+		startActivity(intent);
+		
 	}
 }
