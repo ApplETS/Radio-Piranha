@@ -14,7 +14,7 @@
             android:id="@+id/about_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bienvenue dans la section auditive de votre université!"
+            android:text="@string/about_title"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Radio Piranha c&apos;est la radio étudiante de l&apos;ÉTS. C&apos;est un regroupement d&apos;étudiants dynamiques, dédiés à vous offrir des émissions au contenu varié et à la sélection musicale tout aussi mordante."
+            android:text="@string/about_paragraphe_1"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Diffusée sur le web 24h sur 24h, Radio Piranha donne la possibilité à tous les étudiants d&apos;animer une émission de radio!"
+            android:text="@string/about_paragraphe_2"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Vous avez un concept d&apos;émission incroyable à partager avec nous, vous avez des questions ou vous désirez commencer à animer dès maintenant? Passez nous voir au local A-1186!"
+            android:text="@string/about_paragraphe_3"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="Pour communiquer avec le directeur: directeur@radiopiranha.com"
+            android:text="@string/about_communique_directeur"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="Pour soumettre une émission contactez: programmation@radiopiranha.com"
+            android:text="@string/about_soumettre_program"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="Pour des questions sur la technique: technique@radiopiranha.com"
+            android:text="@string/about_soumettre_question_tech"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="Pour toutes autres questions ou des informations contactez: info@radiopiranha.com"
+            android:text="@string/about_soumettre_question"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="Pour des commentaires sur le site: web@radiopiranha.com"
+            android:text="@string/about_soumettre_commentaire"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
@@ -134,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:text="https://github.com/ApplETS/Radio-Piranha"
+            android:text="@string/about_github"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />

@@ -68,7 +68,7 @@ public class AppRadioActivity extends FragmentActivity {
 		String stream = getString(R.string.stream);
 		String m3u = getString(R.string.m3u);
 
-		new MyM3UTask(getApplicationContext()).execute(m3u);
+		//new MyM3UTask(getApplicationContext()).execute(m3u);
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
