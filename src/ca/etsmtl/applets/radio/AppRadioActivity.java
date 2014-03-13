@@ -1,26 +1,17 @@
 package ca.etsmtl.applets.radio;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnErrorListener;
-import android.media.MediaPlayer.OnPreparedListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -37,24 +28,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Toast;
-import ca.etsmtl.applets.radio.M3UParser.M3UHolder;
 import ca.etsmtl.applets.radio.fragments.AboutFragment;
 import ca.etsmtl.applets.radio.fragments.FacebookPostFragment;
+import ca.etsmtl.applets.radio.fragments.VisualisationFragment;
 import ca.etsmtl.applets.radio.fragments.WebFragment;
-import ca.etsmtl.applets.radio.models.CurrentCalendar;
+import ca.etsmtl.applets.utils.IcyStreamMeta;
+import ca.etsmtl.applets.utils.Utils;
 
 @SuppressLint("DefaultLocale")
 public class AppRadioActivity extends FragmentActivity {
-	private static final CharSequence LOADING = "Loading please wait";
 	private static final CharSequence EMPTY_TITLE = "";
-	protected CurrentCalendar currentCalendar;
 	private MenuItem itemPlayPause;
-	private M3UParser mu3Parser;
 	
 	private boolean musicThreadFinished;
 	private RadioMusicService mService;
 	private boolean mBound;
+
 	
 
 	/** Called when the activity is first created. */
@@ -66,11 +55,6 @@ public class AppRadioActivity extends FragmentActivity {
 
 		setContentView(R.layout.main);
 		String stream = getString(R.string.stream);
-		String m3u = getString(R.string.m3u);
-
-		//new MyM3UTask(getApplicationContext()).execute(m3u);
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		// Set up the ViewPager with the sections adapter.
@@ -99,14 +83,10 @@ public class AppRadioActivity extends FragmentActivity {
 	@Override
 	protected void onStart() {		
 		super.onStart();
-		if(!isMyServiceRunning()){
-			Intent intent = new Intent(this,RadioMusicService.class);
-			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-			startService(intent);
-		}else{
-			Intent intent = new Intent(this,RadioMusicService.class);
-			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		if(Utils.connectedToInternet(this)){
+			startMusic();
 		}
+		
 	}
 	@Override
 	protected void onStop() {
@@ -119,12 +99,21 @@ public class AppRadioActivity extends FragmentActivity {
 //		am.abandonAudioFocus(afChangeListener);
 	}
 	
+	public void startMusic(){
+		if(!isMyServiceRunning()){
+			Intent intent = new Intent(this,RadioMusicService.class);
+			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+			startService(intent);
+		}else{
+			Intent intent = new Intent(this,RadioMusicService.class);
+			bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		}
+	}
 	private void runThreadForPlayer(){
 		musicThreadFinished = false;
 		new Thread(new Runnable() {  
 		    @Override
 		    public void run() {
-		    	  Log.v("AppRadioActivity", "AppRadioActivity musicThreadFinished="+musicThreadFinished);
 		        while (!musicThreadFinished) {
 		            try {
 		                Thread.sleep(1000);
@@ -133,7 +122,6 @@ public class AppRadioActivity extends FragmentActivity {
 		            } catch (Exception e) {
 		                return;
 		            }
-		            Log.v("AppRadioActivity", "AppRadioActivity thread running.");
 		            runOnUiThread(new Runnable() {
 		                @Override
 		                public void run() {
@@ -178,7 +166,6 @@ public class AppRadioActivity extends FragmentActivity {
 						itemPlayPause.setIcon(android.R.drawable.ic_media_play);
 						mService.pause();
 					} else {
-						Log.v("AppRadioActivity", "AppRadioActivity: play");
 						itemPlayPause.setIcon(android.R.drawable.ic_media_pause);
 						mService.play();
 					}
@@ -195,8 +182,8 @@ public class AppRadioActivity extends FragmentActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void displayErrorToast() {
-		Toast.makeText(this, R.string.error_msg, Toast.LENGTH_LONG).show();
+	public RadioMusicService getService(){
+		return mService;
 	}
 
 	/**
@@ -231,8 +218,11 @@ public class AppRadioActivity extends FragmentActivity {
 			// below) with the page number as its lone argument.
 			Fragment fragment = null;
 			if (position == 0) {
+				fragment = new VisualisationFragment();
+			}
+			else if(position ==1){
 				fragment = new WebFragment();
-			} else if (position == 1) {
+			} else if (position == 2) {
 				fragment = new AboutFragment();
 			} else {
 				fragment = new FacebookPostFragment();
@@ -248,17 +238,19 @@ public class AppRadioActivity extends FragmentActivity {
 
 		@Override
 		public int getCount() {
-			return 3;
+			return 4;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
 			case 0:
-				return getString(R.string.title_section2).toUpperCase();
+				return getString(R.string.title_section1).toUpperCase();
 			case 1:
-				return getString(R.string.title_section3).toUpperCase();
+				return getString(R.string.title_section2).toUpperCase();
 			case 2:
+				return getString(R.string.title_section3).toUpperCase();
+			case 3:
 				return getString(R.string.title_section4).toUpperCase();
 			}
 			return null;
@@ -288,9 +280,8 @@ public class AppRadioActivity extends FragmentActivity {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mService =((RadioMusicService.LocalBinder)service).getService();
-			//Toast.makeText(AppRadioActivity.this, "Connecté", Toast.LENGTH_SHORT).show();
 			//mService.setVolume();
-			runThreadForPlayer();
+			runThreadForPlayer(); 
 			mBound = true;
 			
 			
@@ -318,64 +309,6 @@ public class AppRadioActivity extends FragmentActivity {
 			View v = inflater.inflate(R.layout.about, null, false);
 			return v;
 		}
-	}
-
-	class MyM3UTask extends AsyncTask<String, Void, Void> {
-
-		private Context c;
-		private String url;
-
-		public MyM3UTask(Context c) {
-			this.c = c;
-		}
-
-		@SuppressWarnings("unused")
-		@Override
-		protected Void doInBackground(String... params) {
-
-			this.url = params[0];
-			writeFileToInternalStorage();
-
-			mu3Parser = new M3UParser(c);
-			try {
-				M3UHolder m3uHolder = mu3Parser.parseFile();
-				if (m3uHolder != null) {
-					String field0 = m3uHolder.getName(0);
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-
-			return null;
-		}
-
-		private void writeFileToInternalStorage() {
-			String eol = System.getProperty("line.separator");
-			ReadableByteChannel rbc = null;
-			try {
-
-				URL website;
-				try {
-					website = new URL(url);
-					rbc = Channels.newChannel(website.openStream());
-					openFileOutput("radio_m3u.m3u", MODE_WORLD_WRITEABLE)
-							.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-					rbc.close();
-					website = null;
-
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-			}
-		}
-	}
+	}	
 	
 }

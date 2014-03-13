@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.media.MediaPlayer.TrackInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -103,11 +104,11 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 				} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN
 						|| focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
 
-					if (!player.isPlaying()) {
+			
+			 if(mState == State.Retrieving){
 					am.setStreamVolume(AudioManager.STREAM_MUSIC, 5, 0);
-					player.start();
-					mState = State.Playing;
-				 }
+					player.start();					mState = State.Playing;
+			 }
 				} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 
 					am.abandonAudioFocus(afChangeListener);
@@ -200,7 +201,7 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 		notification.tickerText = text;
 		notification.icon = R.drawable.ic_launcher;
 	//	notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_NO_CLEAR ;
 		notification.setLatestEventInfo(getApplicationContext(), getResources().getString(R.string.app_name),
 				text, pi);
 		
@@ -231,6 +232,5 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 			setAsForeground(getString(R.string.notification_text));
 		}
 	}
-	
 
 }

@@ -8,5 +8,31 @@
         android:id="@+id/webView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <RelativeLayout 
+        android:id="@+id/webview_connect_fail_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:padding="20dp"
+        android:visibility="gone">
+        
+        <TextView 
+            android:id="@+id/webview_connect_fail_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="30dp"
+            android:textColor="#fff"
+            android:text="@string/webview_connect_fail_text"/>
+        
+        <ImageButton 
+            android:id="@+id/web_connect_fail_reconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/webview_connect_fail_text"
+            android:layout_centerHorizontal="true"
+            android:src="@android:drawable/ic_menu_rotate"/>
+            
+        
+    </RelativeLayout>
 
 </LinearLayout>

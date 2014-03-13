@@ -14,7 +14,7 @@ public class ApplicationManager extends Application {
 	public void onCreate() {
 		super.onCreate();
 		ACRA.init(this);
-		BugSenseHandler.initAndStartSession(this, "4422c148");
+		//BugSenseHandler.initAndStartSession(this, "4422c148");
 	}
 }
 

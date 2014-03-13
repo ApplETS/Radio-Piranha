@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+   
+	<LinearLayout 
+	    android:id="@+id/visualizer_info_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="70dp"
+	    android:orientation="vertical">
+	    <TextView
+	        android:id="@+id/visualizer_title"
+	        android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="En train de télécharger"
+			android:gravity="center_horizontal"
+			android:textColor="#fff"
+			android:textSize="26sp"/>
+		
+        <TextView 
+            android:id="@+id/visualizer_artiste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxWidth="150dp"
+            android:textSize="20sp"
+            android:text="@null"
+            android:textColor="#fff"/>
+        </LinearLayout>
+        <ca.etsmtl.applets.visualizer.VisualizerView
+            android:id="@+id/visualizerView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/visualizer_info_layout"/>
+
+
+</RelativeLayout>

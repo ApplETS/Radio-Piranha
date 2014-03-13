@@ -37,7 +37,7 @@
         <item>ven.</item>
         <item>sam.</item>
     </string-array>
-
+	<string name="title_section1">À L\'ÉCOUTE</string>
     <string name="title_section3">À PROPOS</string>
     <string name="title_section2">HORAIRE</string>
     <string name="title_section4">FACEBOOK</string>
@@ -60,4 +60,7 @@
     <string name="about_soumettre_question">Pour toutes autres questions ou des informations contactez: info@radiopiranha.com</string>
     <string name="about_soumettre_commentaire">Pour des commentaires sur le site: web@radiopiranha.com</string>
     <string name="about_github">https://github.com/ApplETS/Radio-Piranha"</string>
+    
+    <!-- Calendar -->
+    <string name="webview_connect_fail_text">Vous n\'êtes actuellement pas connecté à internet. Cette application a besoin d\'internet pour fonctionner</string>
 </resources>

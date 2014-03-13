@@ -15,7 +15,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-import utils.XMLNewsParser;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +35,7 @@ import android.widget.TextView;
 import ca.etsmtl.applets.radio.R;
 import ca.etsmtl.applets.radio.models.News;
 import ca.etsmtl.applets.radio.models.ObservableBundle;
+import ca.etsmtl.applets.utils.XMLNewsParser;
 
 public class FacebookPostFragment extends ListFragment implements Observer, OnItemClickListener {
 
@@ -181,9 +181,11 @@ public class FacebookPostFragment extends ListFragment implements Observer, OnIt
 				@Override
 				public void run() {
 					final News n = (News) obj;
-					adapter.add(n);
-					adapter.notifyDataSetChanged();
-					getListView().setOnItemClickListener(FacebookPostFragment.this);
+					if(getView()!=null){
+						adapter.add(n);
+						adapter.notifyDataSetChanged();
+						getListView().setOnItemClickListener(FacebookPostFragment.this);
+					}
 				}
 			});
 		}

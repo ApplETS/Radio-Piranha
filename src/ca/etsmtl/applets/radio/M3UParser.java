@@ -2,8 +2,11 @@ package ca.etsmtl.applets.radio;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 import android.content.Context;
+import android.util.Log;
 
 public class M3UParser {
 
@@ -16,7 +19,8 @@ public class M3UParser {
 
 	public String convertStreamToString(java.io.InputStream is) {
 		try {
-			return new java.util.Scanner(is).useDelimiter("\\A").next();
+			java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+			return s.hasNext() ? s.next(): "";
 		} catch (java.util.NoSuchElementException e) {
 			e.printStackTrace();
 			return "";
@@ -26,6 +30,7 @@ public class M3UParser {
 	public M3UHolder parseFile() throws FileNotFoundException {
 		// if (f.exists()) {
 		String stream = convertStreamToString(readFileFromInternalStorage());
+		Log.v("M3UParser", "M3UParser: stream ="+stream);
 		stream = stream.replaceAll("#EXTM3U", "").trim();
 		String[] arr = stream.split("#EXTINF.*,");
 		String urls = "", data = "";
@@ -46,9 +51,11 @@ public class M3UParser {
 		// return null;
 	}
 
-	private FileInputStream readFileFromInternalStorage() {
+	private InputStream readFileFromInternalStorage() {
 		try {
-			return c.openFileInput("radio_m3u.m3u");
+			//return c.openFileInput("radio_m3u.m3u");
+		 InputStream input=	c.getResources().openRawResource(R.raw.radiopiranha);
+		 return input;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
