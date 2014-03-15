@@ -172,6 +172,7 @@ public class RadioMusicService extends Service implements MediaPlayer.OnPrepared
 	}
 	public void play(){
 		if(!mState.equals(State.Preparing) && !mState.equals(State.Retrieving)){
+			player.seekTo(player.getDuration()-1);
 			player.start();
 			mState = State.Playing;
 			udpateNotification("(playing)");

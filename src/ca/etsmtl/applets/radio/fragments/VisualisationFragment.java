@@ -69,25 +69,24 @@ public class VisualisationFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+     	getActivity().setProgressBarIndeterminateVisibility(true);
         isInFront=true;
     
     }
 
     
-@Override
-public void onResume() {
+    @Override
+    public void onResume() {
 	
 	super.onResume();
 	isInFront = true;
-	 
 	new Thread(new Runnable() {  
 		@Override
 		public void run() {
 			final AppRadioActivity activity = (AppRadioActivity)getActivity();
-			   
-			Log.v("VisualisationFragment", "VisualisationFragment: runThread");
 			while (isInFront){
-				Log.v("VisualisationFragment","VisualisationFragment isInFront="+isInFront);
+			
+
 				RadioMusicService mService = activity.getService();
 				if(mService!=null){
 				      
@@ -98,6 +97,14 @@ public void onResume() {
 					if( (mPlayer!=null) && mPlayer.isPlaying()){
 						if(!mVisualizerView.isLink()){
 							mVisualizerView.link(mPlayer);
+							activity.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									activity.setProgressBarIndeterminateVisibility(
+											false);
+								}
+							});
 						}
 					}
 					if(Utils.connectedToInternet(getActivity())){
@@ -270,6 +277,8 @@ public void onResume() {
 									
 									title.setText(elem[1]);
 									artiste.setText(elem[0]);
+								}else{
+									title.setText("");
 								}
 						          
 							}
