@@ -42,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/about_paragraphe_3"
+            android:textColorLink="@color/yellow"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -51,73 +52,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:autoLink="email"
-            android:text="@string/about_communique_directeur"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/about_communique"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
 
-        <TextView
-            android:id="@+id/TextView05"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:autoLink="email"
-            android:text="@string/about_soumettre_program"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"
-            android:textColorLink="@color/yellow" />
-
-        <TextView
-            android:id="@+id/TextView03"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:autoLink="email"
-            android:text="@string/about_soumettre_question_tech"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"
-            android:textColorLink="@color/yellow" />
-
-        <TextView
-            android:id="@+id/TextView04"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:autoLink="email"
-            android:text="@string/about_soumettre_question"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"
-            android:textColorLink="@color/yellow" />
-
-        <TextView
-            android:id="@+id/TextView06"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:autoLink="email"
-            android:text="@string/about_soumettre_commentaire"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"
-            android:textColorLink="@color/yellow" />
-
-        <TextView
-            android:id="@+id/about_stream_lbl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="30dip"
-            android:text="@string/stream_lbl"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/about_stream"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autoLink="all"
-            android:text="@string/stream"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white"
-            android:textColorLink="@color/yellow" />
 
         <TextView
             android:id="@+id/about_applets_lbl"
@@ -139,14 +78,15 @@
             android:textColor="@android:color/white"
             android:textColorLink="@color/yellow" />
 
-        <TextView
+       <!--   <TextView
             android:id="@+id/about_connection_info_lbl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="30dip"
             android:text="@string/app_name"
+            android:textColorLink="@color/yellow" 
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white" /> -->
     </LinearLayout>
 
 </ScrollView>

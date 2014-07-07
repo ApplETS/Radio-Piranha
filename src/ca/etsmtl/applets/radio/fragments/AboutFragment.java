@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,7 @@ import ca.etsmtl.applets.radio.R;
 public class AboutFragment extends Fragment implements OnClickListener {
 
 	private TextView txt;
+	private TextView linkTxt;
 	private WifiInfo info;
 
 	@Override
@@ -34,19 +36,29 @@ public class AboutFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		final View v = inflater.inflate(R.layout.about, null, false);
-		txt = ((TextView) v.findViewById(R.id.about_connection_info_lbl));
+		//For testing connection
+		//txt = ((TextView) v.findViewById(R.id.about_connection_info_lbl));
+		linkTxt = ((TextView) v.findViewById(R.id.textView2));
+		linkTxt.setText(Html.fromHtml(getActivity().getString(R.string.about_paragraphe_3)));
+		linkTxt.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+		
+	
 		TextView gitHubText =((TextView) v.findViewById(R.id.about_applets_lbl));
 		gitHubText.setOnClickListener(this);
-		if (info.getBSSID() != null) {
-			final int str = WifiManager.calculateSignalLevel(info.getRssi(), 5);
-			final int spd = info.getLinkSpeed();
-			final String u = WifiInfo.LINK_SPEED_UNITS;
-
-			final String ssid = info.getSSID();
-			txt.setText(String.format(
-					"Connected to %s at %s%s. Strength: %s/5", ssid, spd, u,
-					str));
-		}
+		
+// TO TEST CONNECTION
+//		if (info.getBSSID() != null) {
+//			final int str = WifiManager.calculateSignalLevel(info.getRssi(), 5);
+//			final int spd = info.getLinkSpeed();
+//			final String u = WifiInfo.LINK_SPEED_UNITS;
+//
+//			final String ssid = info.getSSID();
+//			txt.setText(String.format(
+//					"Connected to %s at %s%s. Strength: %s/5", ssid, spd, u,
+//					str));
+//		}
 
 		return v;
 	}

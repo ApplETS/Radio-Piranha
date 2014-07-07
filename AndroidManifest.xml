@@ -37,9 +37,9 @@
         <activity android:name="ca.etsmtl.applets.radio.AboutActivity" />
         <activity android:name="ca.etsmtl.applets.radio.SettingsActivity" />
 
-        <receiver android:name="ca.etsmtl.applets.radio.AppRadioActivity$NoisyAudioStreamReceiver" >
+        <receiver android:name="ca.etsmtl.applets.radio.AppRadioActivity$MusicIntentReceiver" >
             <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+                <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
         </receiver>
 

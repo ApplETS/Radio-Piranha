@@ -51,14 +51,16 @@
    
     <!-- About  -->
     <string name="about_title">Bienvenue dans la section auditive de votre université!</string>
-    <string name="about_paragraphe_1">Radio Piranha c\'est la radio étudiante de l\'ÉTS. C\'est un regroupement d\'étudiants dynamiques, dédiés à vous offrir des émissions au contenu varié et à la sélection musicale tout aussi mordante.</string>
-    <string name="about_paragraphe_2">Diffusée sur le web 24h sur 24h, Radio Piranha donne la possibilité à tous les étudiants d\'"animer une émission de radio!</string>
-    <string name="about_paragraphe_3">Vous avez un concept d\'émission incroyable à partager avec nous, vous avez des questions ou vous désirez commencer à animer dès maintenant? Passez nous voir au local A-1186!</string>
-    <string name="about_communique_directeur">Pour communiquer avec le directeur: directeur@radiopiranha.com</string>
-    <string name="about_soumettre_program">Pour soumettre une émission contactez: programmation@radiopiranha.com</string>
-    <string name="about_soumettre_question_tech">Pour des questions sur la technique: technique@radiopiranha.com</string>
-    <string name="about_soumettre_question">Pour toutes autres questions ou des informations contactez: info@radiopiranha.com</string>
-    <string name="about_soumettre_commentaire">Pour des commentaires sur le site: web@radiopiranha.com</string>
+    <string name="about_paragraphe_1">Radio Piranha est la radio web de l\'ÉTS situé au local A-1199. La radio est un regroupement d\'étudiants dynamiques, dédiés à vous offrir des émissions au contenu varié et à la sélection musicale tout aussi mordante.</string>
+    <string name="about_paragraphe_2">Diffusée sur le web 24h sur 24h, Radio Piranha donne la possibilité à tous les étudiants d\'animer une émission de radio!</string>
+    <string name="about_paragraphe_3"> <![CDATA[
+        - Facebook: <a href="https://www.facebook.com/RadioPiranha">RadioPiranha</a> <br><br>
+		- Twitter: <a href="https://twitter.com/RadioPiranhaETS">RadioPiranhaETS </a><br><br>
+		- Youtube: <a href="https://www.youtube.com/channel/UCRxwf1_bQmBo85_NXlzF1Ag">Radio Piranha TV </a><br><br>
+		- Soundcloud:<a href="https://soundcloud.com/radio-piranha">Radio Piranha</a><br><br>
+		- Skype: radiopiranhaets ]]></string>
+    <string name="about_communique">- Contact: info@radiopiranha.com</string>
+
     <string name="about_github">https://github.com/ApplETS/Radio-Piranha"</string>
     
     <!-- Calendar -->

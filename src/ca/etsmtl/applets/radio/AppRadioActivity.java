@@ -7,6 +7,7 @@ import java.net.URL;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Toast;
 import ca.etsmtl.applets.radio.fragments.AboutFragment;
 import ca.etsmtl.applets.radio.fragments.FacebookPostFragment;
 import ca.etsmtl.applets.radio.fragments.VisualisationFragment;
@@ -37,6 +39,7 @@ import ca.etsmtl.applets.utils.Utils;
 
 @SuppressLint("DefaultLocale")
 public class AppRadioActivity extends FragmentActivity {
+	private static String TAG = "AppRadioActivity";
 	private static final CharSequence EMPTY_TITLE = "";
 	private MenuItem itemPlayPause;
 	
@@ -201,6 +204,15 @@ public class AppRadioActivity extends FragmentActivity {
 	 */
 	ViewPager mViewPager;
 
+	
+	
+	public class MusicIntentReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context arg0, Intent intent) {
+			Log.v(TAG, "Unplug hearphone");
+		}
+	}
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
