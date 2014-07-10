@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.acra.annotation.ReportsCrashes;
+
+import com.bugsense.trace.BugSenseHandler;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -37,6 +41,7 @@ import ca.etsmtl.applets.radio.fragments.WebFragment;
 import ca.etsmtl.applets.utils.IcyStreamMeta;
 import ca.etsmtl.applets.utils.Utils;
 
+
 @SuppressLint("DefaultLocale")
 public class AppRadioActivity extends FragmentActivity {
 	private static String TAG = "AppRadioActivity";
@@ -56,6 +61,7 @@ public class AppRadioActivity extends FragmentActivity {
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+		
 		setContentView(R.layout.main);
 		String stream = getString(R.string.stream);
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
